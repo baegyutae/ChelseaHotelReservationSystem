@@ -116,6 +116,7 @@ class Hotel {
         System.out.println("2. 예약 확인");
         System.out.println("3. 예약 취소");
         System.out.println("4. 종료");
+        System.out.print("입력 : ");
     }
 
     public void makeReservation() {
@@ -130,6 +131,7 @@ class Hotel {
         }
 
         System.out.println("원하는 객실 번호를 선택하세요: ");
+        System.out.print("입력 : ");
         int roomChoice = scanner.nextInt();
 
         if (roomChoice < 1 || roomChoice > rooms.size()) {
@@ -139,10 +141,10 @@ class Hotel {
 
         Room selectedRoom = rooms.get(roomChoice - 1);
 
-        System.out.println("고객 성함을 입력하세요: ");
+        System.out.print("고객 성함을 입력하세요: ");
         String name = scanner.next();
 
-        System.out.println("고객 전화번호를 입력하세요 (XXX-XXXX-XXXX 형식): ");
+        System.out.print("고객 전화번호를 입력하세요 (XXX-XXXX-XXXX 형식): ");
         String phoneNumber = scanner.next();
 
         String phoneRegex = "\\d{3}-\\d{4}-\\d{4}";
@@ -151,7 +153,7 @@ class Hotel {
             return;
         }
 
-        System.out.println("고객 소지금을 입력하세요: ");
+        System.out.print("고객 소지금을 입력하세요: ");
         int budget = scanner.nextInt();
 
         if (budget < selectedRoom.getPrice()) {
@@ -159,11 +161,10 @@ class Hotel {
             return;
         }
 
-        System.out.println("예약 날짜를 입력하세요 (ISO 8601 형식, 예: 2016-10-27T17:13:40+00:00): ");
-        scanner.nextLine();
-        String reservationDateInput = scanner.nextLine();
+        System.out.print("예약 날짜를 입력하세요 (연월일 형식, 예: 20231026): ");
+        String reservationDateInput = scanner.next();
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
         Date reservationDate;
         try {
             reservationDate = dateFormat.parse(reservationDateInput);
