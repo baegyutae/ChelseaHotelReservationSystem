@@ -9,12 +9,14 @@ import java.util.regex.Pattern;
 class Room {
     private String type;
     private int price;
-    private boolean available;
+    private int totalAvailable; // 객실의 총 개수
+    private int available;      // 남은 객실 수
 
-    public Room(String type, int price) {
+    public Room(String type, int price, int totalAvailable) {
         this.type = type;
         this.price = price;
-        this.available = true;
+        this.totalAvailable = totalAvailable;
+        this.available = totalAvailable;
     }
 
     public String getType() {
@@ -26,15 +28,23 @@ class Room {
     }
 
     public boolean isAvailable() {
-        return available;
+        return available > 0;
     }
 
     public void reserveRoom() {
-        available = false;
+        if (available > 0) {
+            available--;
+        }
     }
 
     public void releaseRoom() {
-        available = true;
+        if (available < totalAvailable) {
+            available++;
+        }
+    }
+
+    public int getAvailable() {
+        return available;
     }
 }
 
@@ -105,9 +115,9 @@ class Hotel {
         rooms = new ArrayList<>();
         customers = new ArrayList<>();
         reservations = new ArrayList<>();
-        rooms.add(new Room("스위트룸", 300000));
-        rooms.add(new Room("더블룸", 150000));
-        rooms.add(new Room("싱글룸", 100000));
+        rooms.add(new Room("스위트룸", 300000, 2));
+        rooms.add(new Room("더블룸", 150000, 3));
+        rooms.add(new Room("싱글룸", 100000, 5));
     }
 
     public void displayMenu() {
@@ -121,17 +131,17 @@ class Hotel {
 
     public void makeReservation() {
         Scanner scanner = new Scanner(System.in);
+        Room selectedRoom = null; // Room 변수를 선언하고 초기화
 
         System.out.println("남은 객실:");
         for (int i = 0; i < rooms.size(); i++) {
             Room room = rooms.get(i);
             if (room.isAvailable()) {
-                System.out.println((i + 1) + ". " + room.getType() + " - 가격: " + room.getPrice());
+                System.out.println((i + 1) + ". " + room.getType() + " - 가격: " + room.getPrice() + " - 남은 객실 수: " + room.getAvailable());
             }
         }
 
-        System.out.println("원하는 객실 번호를 선택하세요: ");
-        System.out.print("입력 : ");
+        System.out.print("원하는 객실 번호를 선택하세요: ");
         int roomChoice = scanner.nextInt();
 
         if (roomChoice < 1 || roomChoice > rooms.size()) {
@@ -139,7 +149,14 @@ class Hotel {
             return;
         }
 
-        Room selectedRoom = rooms.get(roomChoice - 1);
+        selectedRoom = rooms.get(roomChoice - 1); // 선택한 객실을 할당
+
+        if (!selectedRoom.isAvailable()) {
+            System.out.println("선택한 객실은 모두 예약되었습니다. 다른 객실을 선택하세요.");
+            return;
+        }
+
+        selectedRoom = rooms.get(roomChoice - 1);
 
         System.out.print("고객 성함을 입력하세요: ");
         String name = scanner.next();
